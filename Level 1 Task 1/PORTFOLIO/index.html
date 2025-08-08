@@ -1,0 +1,240 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+</head>
+<body>
+    <header class="header">
+        <a href="#" class="logo">Portfolio</a>
+        <i class='bx bx-menu' id="menu-icon"></i>
+        <nav class="navbar">
+            <a href="#home" class="active">Home</a>
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="#portfolio">Portfolio</a>
+            <a href="#testimonial">Testimonial</a>
+            <a href="#contact">Contact</a>
+            <a href="Resume - Ankur Mukherjee.pdf" download>Resume</a>
+        </nav>
+        <i class='bx bx-moon' id="darkMode-icon"></i>
+    </header>
+
+    <section class="home" id="home">
+        <div class="home-content">
+            <h3>Hello, I am</h3>
+            <h1>Ankur Mukherjee</h1>
+            <p>I'm a designer who loves to blends stunning visuals with strategic branding. With a strong background in Graphic and Logo Design, UI/UX, and digital marketing, I help brands stand out and connect with their audience through impactful design and storytelling.</p>
+            <div class="social-media">
+                <span><strong style="color: var(--main-color);">250+</strong><br>projects</span>
+                <span><strong style="color: var(--main-color);">92%</strong><br>satisfaction rate</span>
+            </div>
+            <a href="#about" class="btn">Get Started</a>
+        </div>
+
+        <div class="profession-container">
+            <div class="profession-box">
+                <div class="profession" style="--i:0;">
+                    <i class='bx bx-palette'></i>
+                    <h3>Graphic Designer</h3>
+                </div>
+                <div class="profession" style="--i:1;">
+                    <i class='bx bx-vector'></i>
+                    <h3>Logo Designer</h3>
+                </div>
+                <div class="profession" style="--i:2;">
+                    <i class='bx bx-layout'></i>
+                    <h3>UI/UX Designer</h3>
+                </div>
+                <div class="profession" style="--i:3;">
+                    <i class='bx bx-line-chart'></i>
+                    <h3>Digital Marketing</h3>
+                </div>
+                <div class="circle"></div>
+            </div>
+            <div class="overlay"></div>
+        </div>
+
+        <div class="home-img">
+            <img src="images/home.png" alt="">
+        </div>
+    </section>
+
+    <section class="about" id="about">
+        <div class="about-img">
+            <img src="images/ref-removebg-preview (1).png" alt="">
+        </div>
+        <div class="about-content">
+            <h2 class="heading">About <span>Me</span></h2>
+            <h3 style="font-weight: bold; color: var(--text-color);">Hi there, welcome to my website! I'm Ankur, a passionate Designer with years of experience in Graphic and Logo Design, UI/UX Design, Digital Marketing, and Branding, I bring ideas to life through thoughtful design which communicates.</h3>
+            <p>Over time, I’ve worked with startups, personal brands, and established businesses—helping them build a strong digital presence
+                 and stand out in competitive markets.
+                 </p>
+                 <p>Whether it’s designing a logo, revamping a 
+                 website interface, or managing a digital campaign, I approach each project with dedication 
+                 and a deep understanding of the brand’s vision.</p>
+            <a href="#" class="btn" onclick="openPopup()">Read More</a>
+        </div>
+    </section>
+
+    <div id="about-popup" class="popup">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closePopup()">&times;</span>
+            <h2>About Me</h2>
+            <p>Hi there, welcome to my website! I'm Ankur, a passionate Designer with years of experience in Graphic and Logo Design, UI/UX Design, Digital Marketing, and Branding, I bring ideas to life through thoughtful design which communicates.</p>
+            <p>Over time, I’ve worked with startups, personal brands, and established businesses—helping them build a strong digital presence and stand out in competitive markets. Whether it’s designing a logo, revamping a website interface, or managing a digital campaign, I approach each project with dedication and a deep understanding of the brand’s vision.</p>
+            <p>This space is a glimpse into my world—my work, my process, and my passion.</p>
+            <p>Thanks for stopping by—I hope you enjoy browsing through my portfolio just as much as I enjoyed creating it.</p>
+        </div>
+    </div>
+
+    <section class="services" id="services">
+        <h2 class="heading">My <span>Services</span></h2>
+        <div class="services-container">
+            <div class="services-box">
+                <i class='bx bx-code-alt'></i>
+                <h3>Web Development</h3>
+                <p>I specialize in designing clean, intuitive, and responsive UI that enhance the User Experience. My focus lies in blending functionality with aesthetics to create websites that not only look professional but also offer a seamless and meaningful experience to visitors. Every element is thoughtfully placed to reflect your brand and guide users effortlessly.</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+            <div class="services-box">
+                <i class='bx bx-paint'></i>
+                <h3>Graphic Design</h3>
+                <p>Whether it’s a custom logo, social media design, or full brand identity, We deliver creative solutions that speak your brand’s language. Our designs are bold, versatile, and purpose-driven—crafted to make your brand stand out and stay memorable. From concept to final output, we ensure each design aligns with your vision and communicates effectively.</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+            <div class="services-box">
+                <i class='bx bx-bar-chart-alt'></i>
+                <h3>Digital Marketing</h3>
+                <p>We help brands build their presence and connect with the right audience through strategic digital marketing and cohesive branding. From campaign planning to content creation and visual branding, we make sure every piece of communication reflects your brand's core values, builds trust, and drives real engagement across platforms.</p>
+                <a href="#" class="btn">Read More</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="portfolio" id="portfolio">
+        <h2 class="heading">Graphics</h2>
+        <div class="portfolio-container">
+            <div class="portfolio-box">
+                <img src="images/graphics 1.jpg" alt="">
+            </div>
+            <div class="portfolio-box">
+                <img src="images/ANKUR MUKHERJEE 2411200001167 (1).png" alt="">
+            </div>
+            <div class="portfolio-box">
+                <img src="images/graphics 3.jpg" alt="">
+            </div>
+            <div class="portfolio-box">
+                <img src="images/graphics 4.png" alt="">
+            </div>
+            <div class="portfolio-box">
+                <img src="images/graphics 2.jpg" alt="">
+            </div>
+            <div class="portfolio-box">
+                <img src="images/graphics 5.jpg" alt="">
+            </div>
+        </div>
+
+        
+    </section>
+
+    <section class="testimonial" id="testimonial">
+        <h2 class="heading">Client <span>Reviews</span></h2>
+        <div class="testimonial-container">
+            <div class="testimonial-wrapper">
+                <div class="testimonial-box mySwiper">
+                    <div class="testimonial-content swiper-wrapper">
+                        <div class="testimonial-slide swiper-slide">
+                            <img src="images/test1.jpg" alt="">
+                            <h3>Aagnik Mazumdar</h3>
+                            <p>"Ankur’s graphic design expertise has been a game-changer for Aura Creations. From eye-catching social media creatives to sleek promotional designs, his work consistently exceeds expectations. His ability to understand the brand’s aesthetic and deliver visually compelling content has helped us elevate our presence and connect with our audience more effectively. Professional, creative, and always on time — working with Ankur has been one of the best decisions for our visual branding journey."</p>
+                        </div>
+                        <div class="testimonial-slide swiper-slide">
+                            <img src="images/test2.jpg" alt="">
+                            <h3>Subarno Priyo Pandit</h3>
+                            <p>"Ankur’s work on my logo and website UI/UX design was nothing short of exceptional. He took the time to truly understand my vision and translated it into a clean, modern, and professional identity that stands out. The logo perfectly captures the essence of what I do, and the website interface is both visually stunning and highly user-friendly. His attention to detail and creative intuition made the entire process smooth and rewarding. I couldn’t have asked for a better designer to bring my ideas to life."</p>
+                        </div>
+                        <div class="testimonial-slide swiper-slide">
+                            <img src="images/test3.jpg" alt="">
+                            <h3>Ishika Mukherjee</h3>
+                            <p>“Working with Ankur on social media management and brand building was one of the best decisions I’ve made for my personal brand. He brought structure, consistency, and creativity to my online presence — helping me grow my engagement and build a strong, cohesive identity across platforms. From designing high-quality posts to planning impactful content strategies, Ankur handled everything with professionalism and passion. Thanks to him, my brand finally feels aligned with my vision.”</p>
+                        </div>
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                    <div class="swiper-pagination"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+        <h2 class="heading">Contact <span>Me!</span></h2>
+        <form id="contact-form">
+            <div class="input-box">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="email" id="email" placeholder="Email Address" required>
+            </div>
+            <textarea id="message" cols="30" rows="10" placeholder="Your Message" required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+        </form>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-text">
+            <p>Copyright &copy; 2025 | All Rights Reserved.</p>
+        </div>
+        <div class="footer-iconTop">
+            <a href="#home"><i class='bx bx-up-arrow-alt'></i></a>
+        </div>
+    </footer>
+
+    <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
