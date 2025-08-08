@@ -1,0 +1,178 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ankur Mukherjee - Designer</title>
+    <link rel="stylesheet" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+    <div class="main">
+        <header>
+            <a href="#" class="logo">Ankur Mukherjee</a>
+            <div class="toggle"></div>
+            <ul class="navigation">
+                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#reviews">Reviews</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="Resume - Ankur Mukherjee.pdf" download>Resume</a></li>
+            </ul>
+        </header>
+
+        <section class="content" id="home">
+            <div class="text">
+                <h2>Hello, I'm<br><span>Ankur Mukherjee</span></h2>
+                <p>I'm a designer who loves to blends stunning visuals with strategic branding. With a strong background in Graphic and Logo Design, UI/UX, and digital marketing, I help brands stand out and connect with their audience through impactful design and storytelling.</p>
+                <div class="stats">
+                    <span><strong>250+</strong><br>projects</span>
+                    <span><strong>92%</strong><br>satisfaction rate</span>
+                </div>
+                <a href="#about" class="btn">Get Started</a>
+            </div>
+            <div class="slider">
+                <div class="slides active">
+                    <img src="images/home.png" alt="Ankur Mukherjee">
+                </div>
+            </div>
+        </section>
+
+        <section class="about" id="about">
+            <h2>About <span>Me</span></h2>
+            <p>Hi there, welcome to my website! I'm Ankur, a passionate Designer with years of experience in Graphic and Logo Design, UI/UX Design, Digital Marketing, and Branding, I bring ideas to life through thoughtful design which communicates.</p>
+            <p>Over time, I’ve worked with startups, personal brands, and established businesses—helping them build a strong digital presence and stand out in competitive markets.</p>
+        </section>
+
+        <section class="services" id="services">
+            <h2>My <span>Services</span></h2>
+            <div class="services-container">
+                <div class="services-box">
+                    <i class='bx bx-code-alt'></i>
+                    <h3>Web Development</h3>
+                    <p>I specialize in designing clean, intuitive, and responsive UI that enhance the User Experience.</p>
+                </div>
+                <div class="services-box">
+                    <i class='bx bx-paint'></i>
+                    <h3>Graphic Design</h3>
+                    <p>Whether it’s a custom logo, social media design, or full brand identity, We deliver creative solutions.</p>
+                </div>
+                <div class="services-box">
+                    <i class='bx bx-bar-chart-alt'></i>
+                    <h3>Digital Marketing</h3>
+                    <p>We help brands build their presence and connect with the right audience through strategic digital marketing.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="portfolio" id="portfolio">
+            <h2>Portfolio</h2>
+            <div class="portfolio-container">
+                <div class="portfolio-box">
+                    <img src="images/graphics 1.jpg" alt="">
+                </div>
+                <div class="portfolio-box">
+                    <img src="images/ANKUR MUKHERJEE 2411200001167 (1).png" alt="">
+                </div>
+                <div class="portfolio-box">
+                    <img src="images/graphics 3.jpg" alt="">
+                </div>
+                <div class="portfolio-box">
+                    <img src="images/graphics 4.png" alt="">
+                </div>
+                <div class="portfolio-box">
+                    <img src="images/graphics 5.jpg" alt="">
+                </div>
+                
+            </div>
+        </section>
+
+        <section class="reviews" id="reviews">
+            <h2>Client <span>Reviews</span></h2>
+            <div class="reviews-container">
+                <div class="review-box">
+                    <img src="images/test1.jpg" alt="">
+                    <h3>Jackson Levi</h3>
+                    <p>“Brilliant designs that transformed our brand identity and visual communication.”</p>
+                </div>
+                <div class="review-box">
+                    <img src="images/test2.jpg" alt="">
+                    <h3>Flora Ocean</h3>
+                    <p>“Logo and UI/UX design exceeded expectations — clean, impactful, modern.”</p>
+                </div>
+                <div class="review-box">
+                    <img src="images/test3.jpg" alt="">
+                    <h3>Julian Grayson</h3>
+                    <p>“Boosted my brand presence with creative, consistent social media strategies.”
+
+</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="contact" id="contact">
+            <h2>Contact <span>Me!</span></h2>
+            <form>
+                <div class="input-box">
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email Address" required>
+                </div>
+                <textarea cols="30" rows="10" placeholder="Your Message" required></textarea>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </section>
+
+        <div class="footer">
+            <ul class="sci">
+                <li><a href="#"><i class='bx bxl-facebook'></i></a></li>
+                <li><a href="#"><i class='bx bxl-instagram'></i></a></li>
+                <li><a href="#"><i class='bx bxl-linkedin'></i></a></li>
+            </ul>
+            <div class="footer-text">
+                <p>Copyright &copy; 2025 | All Rights Reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
